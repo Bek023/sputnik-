@@ -1,168 +1,107 @@
-# Sputnik — Landing Page & Admin Panel
+# Sputnik — Profesionallar uchun Landing Page va Admin Panel
 
-Sputnik — elektr xizmatlari kompaniyasi uchun tayyorlangan zamonaviy landing page va boshqaruv paneli. React 19, Vite va Tailwind CSS 4 yordamida yaratilgan.
+Sputnik — elektr xizmatlari kompaniyasi uchun mo'ljallangan, zamonaviy dizayn va to'liq boshqariladigan (CMS) landing page. Loyiha React 19, Vite va Tailwind CSS texnologiyalari yordamida yaratilgan bo'lib, barcha ma'lumotlar backend va brauzerning `localStorage` xotirasi orqali dinamik boshqariladi.
 
 ---
 
-## Loyiha tuzilishi
+## 🌟 Loyihaning asosiy xususiyatlari
+
+- **To'liq CMS (Content Management System):** Landing sahifasidagi barcha matnlarni, rasmlarni va hatto Google Maps xaritasini admin paneldan o'zgartirish mumkin.
+- **Premium Dizayn:** Zamonaviy ranglar palitrasi, gradientlar va mikro-animatsiyalar.
+- **Responsivlik:** Barcha qurilmalar (mobil, planshet, desktop) uchun moslashtirilgan.
+- **Dinamik Portfolio va Fikrlar:** Admin panel orqali loyihalar va mijozlar fikrlarini real vaqtda qo'shish/o'chirish.
+- **Maxsus Takliflar:** FAQ va offers bo'limlarini osongina boshqarish.
+
+---
+
+## 📁 Loyiha tuzilishi (Source Structure)
 
 ```
-sputnik/
-├── index.html                 # HTML kirish nuqtasi
-├── package.json               # Bog'liqliklar va skriptlar
-├── vite.config.js             # Vite konfiguratsiyasi (React + Tailwind)
-├── eslint.config.js           # ESLint qoidalari
-├── .gitignore
-│   
-└── src/
-    ├── main.jsx               # React kirish nuqtasi (StrictMode)
-    ├── index.css              # Global stillar (Tailwind, smooth scroll)
-    ├── App.jsx                # Routing: / va /admin
-    │
-    ├── admin/
-    │   └── Admin.jsx          # Admin Dashboard — loyiha, fikr, taklif qo'shish
-    │
-    └── landing/
-        ├── home.jsx           # Asosiy sahifa — barcha bo'limlarni birlashtiradi
-        └── components/
-            ├── header/        # Sarlavha, navigatsiya, mobil menyu
-            ├── main/          # Hero bo'limi (gradient, badge'lar)
-            ├── servise/       # Xizmatlar + "Why Choose Us"
-            ├── project/       # Portfolio — loyihalar ro'yxati
-            ├── rate/          # Mijoz fikrlari (testimonials)
-            ├── offers/        # Maxsus takliflar (admin orqali)
-            ├── contact/       # Xizmat hududi, xarita,     aloqa formasi
-            └── footer/          # FAQ, Quick Links, ijtimoiy tarmoqlar
+src/
+├── main.jsx                 # React kirish nuqtasi
+├── App.jsx                  # Routing va Context Provider
+├── context/
+│   └── SiteContentContext.jsx # Sayt matnlari va sozlamalari (LocalStorage CMS)
+├── admin/
+│   ├── Admin.jsx            # Asosiy Admin Dashboard (Styled UI)
+│   ├── AdminGuard.jsx      # Himoyalangan routerlar
+│   └── login/               # Admin kirish sahifasi
+└── landing/
+    ├── home.jsx             # Asosiy landing container
+    └── components/          # Bo'limlar: Header, Hero, Service, Project, Contact, Footer
 ```
 
 ---
 
-## Fayllar va ularning vazifasi
+## 🌐 Admin Panel Imkoniyatlari
 
-### Asosiy fayllar
+Admin paneli `/sputnik/admin` manzili orqali ochiladi. Unda quyidagi bo'limlar mavjud:
 
-| Fayl | Vazifa |
-|------|--------|
-| `main.jsx` | React DOM render, StrictMode, `index.css` import |
-| `index.css` | `@import "tailwindcss"`, smooth scroll, scroll-margin-top |
-| `App.jsx` | React Router: `/` → Home, `/admin` → Admin |
-| `vite.config.js` | `@vitejs/plugin-react`, `@tailwindcss/vite` |
+### ⚙️ Site Settings (Landing Page CMS)
 
-### Landing komponentlari
+Ushbu bo'lim orqali landing sahifasining har bir qismini tahrirlash mumkin:
 
-| Komponent | Fayl | Tavsif |
-|-----------|------|--------|
-| **Header** | `header/header.jsx` | Sticky header, nav (Home, Service, About, Project, Contact, Admin), "Get Quote", mobil hamburger menyu |
-| **HeroSection** | `main/main.jsx` | Gradient banner, sarlavha, telefon raqam, badge'lar (24/7, Licensed, Satisfaction) |
-| **ServiceAndChoice** | `servise/servise.jsx` | 4 ta xizmat kartasi (Residential, Commercial, Emergency, Smart Home), "Why Choose Us" 3 ta feature |
-| **ProjectGrid** | `project/project.jsx` | 3 ta static loyiha + `admin_projects` dan qo'shimcha loyihalar |
-| **Testimonials** | `rate/rate.jsx` | 2 ta static fikr + `admin_feedbacks` dan qo'shimcha fikrlar |
-| **Offers** | `offers/offers.jsx` | Faqat `admin_offers` — bo'sh bo'lsa bo'lim ko'rinmaydi |
-| **ContactServiceSection** | `contact/contact.jsx` | Xizmat hududlari, Google Maps, aloqa formasi (Name, Email, Phone, Service, Message) |
-| **Footer** | `footer/footer.jsx` | FAQ accordion (6 ta savol), Quick Links, Services, ijtimoiy tarmoqlar, VoltPro branding |
+- **Header:** Logotipni rasm sifatida yuklash va kompaniya nomini o'zgartirish.
+- **Hero Section:** Asosiy sarlavha (Powering...), tavsiflar, telefon raqami va badge matnlari.
+- **Services:** 4 ta asosiy xizmat turi, ularning nomi, tavsifi va **maxsus ikonkalari (rasm yuklash)**.
+- **Why Choose Us:** Statistikalar va afzalliklar.
+- **Contact:** Google Maps embed URL, manzillar va aloqa vositalari.
+- **Footer:** FAQ savol-javoblari va copyright matni.
 
-### Admin panel
+### 🖼️ Loyihalar (Projects)
 
-| Forma | Backend API | Maydonlar |
-|-------|-------------|-----------|
-| **Add New Project** | `POST /api/projects` | title, description, image (base64), link |
-| **Add Client Feedback** | `POST /api/feedbacks` | name, role, content, image (base64), stars (1–5) |
-| **Add Offer** | `POST /api/offers` | title, desc, icon (base64) |
+Yangi loyihalar qo'shish: nomi, tavsifi va rasmi (Styled File Input orqali).
 
-Rasmlar base64 yuboriladi, backend faylga saqlaydi va URL qaytaradi.
+### 💬 Mijozlar Fikri (Testimonials)
+
+Mijoz ismi, lavozimi, fikri, avatar (avatar yuklash) va yulduzli baho (1-5).
 
 ---
 
-## Ma'lumot oqimi (Backend bilan)
+## 🎨 Dizayn Elementlari
 
-```
-Admin Panel (formalar)  →  Backend API  →  Landing komponentlari
-     │                         │                    │
-     ├─ Save Project      →  POST /api/projects   →  project.jsx (GET)
-     ├─ Save Feedback    →  POST /api/feedbacks  →  rate.jsx (GET)
-     └─ Save Offer       →  POST /api/offers     →  offers.jsx (GET)
-```
-
-- **project.jsx** va **rate.jsx**: static ma'lumotlar + API dan qo'shimcha
-- **offers.jsx**: faqat API; bo'sh bo'lsa bo'lim ko'rinmaydi
-- API ishlamasa: localStorage fallback (eski ma'lumotlar)
+- **Styled File Input:** Standart "Choose File" tugmalari o'rniga, upload ikonkasiga ega, dashed border'li va premium ko'rinishdagi custom komponent ishlatilgan.
+- **Lucide Icons:** Barcha bo'limlarda `lucide-react` kutubxonasidan sifatli ikonkalari foydalanilgan.
+- **Tailwind CSS:** Moslashuvchan va tezkor stilizatsiya.
 
 ---
 
-## Texnologiyalar
+## 🚀 O'rnatish va ishga tushirish
 
-| Texnologiya | Versiya | Vazifa |
-|-------------|---------|--------|
-| React | 19.2 | UI |
-| React Router DOM | 7.13 | `/` va `/admin` |
-| Vite | 7.3 | Build va dev server |
-| Tailwind CSS | 4.2 | Styling |
-| Lucide React | 0.577 | Ikonkalar (contact, footer, offers) |
+1. **Repozitoriyani klonlang:**
 
----
+   ```bash
+   git clone <repo-url>
+   cd sputnik-
+   ```
 
-## O'rnatish va ishga tushirish
+2. **Bog'liqliklarni o'rnating:**
 
-### Frontend + Backend birga
+   ```bash
+   npm install
+   ```
 
-```bash
-# 1. Backend (birinchi terminal)
-cd sputnik/backend
-python -m venv venv
-.\venv\Scripts\activate   # Windows
-pip install -r requirements.txt
-python run.py
+3. **Loyiha ishga tushiring:**
+   ```bash
+   npm run dev
+   ```
 
-# 2. Frontend (ikkinchi terminal)
-cd sputnik
-npm install
-npm run dev
-```
+Loyiha quyidagi manzillarda ochiladi:
 
-**URL'lar:**
-- Landing: `http://localhost:5173/`
-- Admin: `http://localhost:5173/admin`
-- Backend API: `http://localhost:8000` | Docs: `http://localhost:8000/docs`
-
-**Faqat frontend** (API ishlamasa localStorage fallback):
-```bash
-cd sputnik
-npm install
-npm run dev
-```
-
-**Boshqa skriptlar:**
-- `npm run build` — production build
-- `npm run preview` — build'ni preview
-- `npm run lint` — ESLint tekshiruvi
+- Landing Page: `http://localhost:5173/`
+- Admin Panel: `http://localhost:5173/sputnik/admin`
 
 ---
 
-## Admin paneldan foydalanish
+## 🔑 Login ma'lumotlari
 
-1. `/admin` sahifasiga o'ting — avval **login** sahifasi ochiladi
-2. **Login:** `admin` | **Parol:** `admin123` (backend `.env` da o'zgartirish mumkin)
-3. Kirishdan keyin Admin Dashboard ochiladi
-4. **Add New Project** — loyiha sarlavhasi, tavsifi, rasm, ixtiyoriy link
-5. **Add Client Feedback** — mijoz ismi, lavozimi, fikr matni, avatar, yulduzlar (1–5)
-6. **Add Offer** — taklif sarlavhasi, tavsifi, ikonka/rasm
-7. Har bir formada **Save** tugmasini bosing — ma'lumotlar backend ga yoziladi
-8. **Chiqish** tugmasi bilan tizimdan chiqing
+Standard admin login:
 
-> **Eslatma:** Ma'lumotlar brauzer `localStorage` da saqlanadi. Brauzer ma'lumotlarini tozalash yoki boshqa brauzer/qurilmada ma'lumotlar yo'qoladi.
+- **Login:** `admin`
+- **Parol:** `admin123`
 
 ---
 
-## Landing bo'limlari (sections)
-
-| ID | Bo'lim |
-|----|--------|
-| `#home` | Hero |
-| `#service` | Xizmatlar |
-| `#about` | Why Choose Us |
-| `#project` | Loyihalar |
-| `#contact` | Aloqa va xarita |
-
----
+© 2024 Sputnik Project. Barcha huquqlar himoyalangan.
 
 © 2024 Sputnik Project. Barcha huquqlar himoyalangan.

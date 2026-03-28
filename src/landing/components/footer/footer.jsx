@@ -1,39 +1,35 @@
 import React, { useState } from "react";
 import { Facebook, Twitter, Linkedin, Instagram, Bolt } from "lucide-react";
+import { useSiteContent } from "../../../context/SiteContentContext";
 
 const Footer = () => {
   const [openIndex, setOpenIndex] = useState(0);
+  const { content } = useSiteContent();
 
   const faqs = [
     {
       question: "What areas do you service?",
-      answer:
-        "We service all major metropolitan areas and surrounding suburbs. Check our service area map for specific locations.",
+      answer: "We service all major metropolitan areas and surrounding suburbs. Check our service area map for specific locations.",
     },
     {
       question: "How quickly can you respond to emergencies?",
-      answer:
-        "We offer 24/7 emergency services with an average response time of under 60 minutes for critical electrical issues.",
+      answer: "We offer 24/7 emergency services with an average response time of under 60 minutes for critical electrical issues.",
     },
     {
       question: "Are your electricians licensed and insured?",
-      answer:
-        "Yes, every member of our team is fully licensed, bonded, and carries comprehensive insurance for your peace of mind.",
+      answer: "Yes, every member of our team is fully licensed, bonded, and carries comprehensive insurance for your peace of mind.",
     },
     {
       question: "Do you offer warranties on your work?",
-      answer:
-        "Absolutely. We stand by our craftsmanship with a 12-month warranty on all labor and parts installed by our team.",
+      answer: "Absolutely. We stand by our craftsmanship with a 12-month warranty on all labor and parts installed by our team.",
     },
     {
       question: "What types of payment do you accept?",
-      answer:
-        "We accept all major credit cards, bank transfers, and digital payment platforms like Apple Pay and Google Pay.",
+      answer: "We accept all major credit cards, bank transfers, and digital payment platforms like Apple Pay and Google Pay.",
     },
     {
       question: "How do I schedule a service appointment?",
-      answer:
-        "You can schedule through our online portal, by filling out the contact form above, or by calling our 24/7 service line.",
+      answer: "You can schedule through our online portal, by filling out the contact form above, or by calling our 24/7 service line.",
     },
   ];
 
@@ -53,12 +49,8 @@ const Footer = () => {
                 onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
               >
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-slate-800">
-                    {faq.question}
-                  </h3>
-                  <div
-                    className={`mt-4 text-slate-600 leading-relaxed transition-all duration-300 ease-in-out ${openIndex === index ? "block" : "hidden"}`}
-                  >
+                  <h3 className="text-lg font-bold text-slate-800">{faq.question}</h3>
+                  <div className={`mt-4 text-slate-600 leading-relaxed transition-all duration-300 ease-in-out ${openIndex === index ? "block" : "hidden"}`}>
                     {faq.answer}
                   </div>
                 </div>
@@ -74,53 +66,32 @@ const Footer = () => {
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-2xl font-bold text-slate-900">
                 <Bolt className="fill-black" size={28} />
-                VoltPro
+                {content.footerCompany}
               </div>
               <p className="text-slate-600 leading-relaxed max-w-xs">
-                Professional electrical services you can trust. Licensed,
-                bonded, and insured.
+                {content.footerDesc}
               </p>
             </div>
 
             <div>
               <h4 className="font-bold text-slate-900 mb-6">Quick Links</h4>
               <ul className="space-y-3 text-slate-600">
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  About Us
-                </li>
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  Services
-                </li>
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  Projects
-                </li>
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  Contact
-                </li>
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  Careers
-                </li>
+                <li className="hover:text-blue-500 cursor-pointer transition">About Us</li>
+                <li className="hover:text-blue-500 cursor-pointer transition">Services</li>
+                <li className="hover:text-blue-500 cursor-pointer transition">Projects</li>
+                <li className="hover:text-blue-500 cursor-pointer transition">Contact</li>
+                <li className="hover:text-blue-500 cursor-pointer transition">Careers</li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-bold text-slate-900 mb-6">Services</h4>
               <ul className="space-y-3 text-slate-600">
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  Residential Wiring
-                </li>
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  Commercial Installations
-                </li>
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  Emergency Repairs
-                </li>
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  Smart Home Solutions
-                </li>
-                <li className="hover:text-blue-500 cursor-pointer transition">
-                  Maintenance
-                </li>
+                <li className="hover:text-blue-500 cursor-pointer transition">Residential Wiring</li>
+                <li className="hover:text-blue-500 cursor-pointer transition">Commercial Installations</li>
+                <li className="hover:text-blue-500 cursor-pointer transition">Emergency Repairs</li>
+                <li className="hover:text-blue-500 cursor-pointer transition">Smart Home Solutions</li>
+                <li className="hover:text-blue-500 cursor-pointer transition">Maintenance</li>
               </ul>
             </div>
 
@@ -137,16 +108,14 @@ const Footer = () => {
                 ))}
               </div>
               <div className="space-y-2">
-                <p className="text-slate-800 font-medium">1-800-VOLTPRO</p>
-                <p className="text-slate-600 hover:text-blue-500 cursor-pointer">
-                  info@voltpro.com
-                </p>
+                <p className="text-slate-800 font-medium">{content.footerPhone}</p>
+                <p className="text-slate-600 hover:text-blue-500 cursor-pointer">{content.footerEmail}</p>
               </div>
             </div>
           </div>
 
           <div className="pt-8 border-t border-slate-200/60 text-center text-slate-500 text-sm">
-            © 2024 VoltPro. All rights reserved.
+            {content.footerCopyright}
           </div>
         </div>
       </footer>

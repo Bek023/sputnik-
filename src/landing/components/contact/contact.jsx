@@ -1,5 +1,9 @@
 import { MapPin, Phone, Mail, Grid } from "lucide-react";
+import { useSiteContent } from "../../../context/SiteContentContext";
+
 const ContactServiceSection = () => {
+  const { content } = useSiteContent();
+
   return (
     <div className="bg-slate-50 min-h-screen py-16 px-4 md:px-8 font-sans">
       <div className="max-w-6xl mx-auto space-y-20">
@@ -20,10 +24,7 @@ const ContactServiceSection = () => {
                   "Commercial Centers",
                   "Residential Areas",
                 ].map((area) => (
-                  <li
-                    key={area}
-                    className="flex items-center gap-3 text-slate-600 font-medium"
-                  >
+                  <li key={area} className="flex items-center gap-3 text-slate-600 font-medium">
                     <Grid size={18} className="text-blue-500" />
                     {area}
                   </li>
@@ -34,8 +35,8 @@ const ContactServiceSection = () => {
             <div className="w-full md:w-2/3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-slate-200 relative min-h-75">
               <iframe
                 title="Service Map"
-                className="w-full h-full  opacity-80"
-                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d53439.01085727181!2d66.8468847!3d39.6509942!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f4d1941369984f7%3A0xdd6b43742d313da8!2z0KHQv9GD0YLQvdC40Lo!5e1!3m2!1sru!2s!4v1773130188076!5m2!1sru!2s"
+                className="w-full h-full opacity-80"
+                src={content.mapUrl}
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"
@@ -53,39 +54,20 @@ const ContactServiceSection = () => {
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-slate-700">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      className="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none transition"
-                    />
+                    <label className="text-sm font-semibold text-slate-700">Name</label>
+                    <input type="text" className="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none transition" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-slate-700">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      className="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none transition"
-                    />
+                    <label className="text-sm font-semibold text-slate-700">Email</label>
+                    <input type="email" className="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none transition" />
                   </div>
                 </div>
-
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-slate-700">
-                    Phone
-                  </label>
-                  <input
-                    type="text"
-                    className="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none transition"
-                  />
+                  <label className="text-sm font-semibold text-slate-700">Phone</label>
+                  <input type="text" className="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none transition" />
                 </div>
-
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-slate-700">
-                    Service Required
-                  </label>
+                  <label className="text-sm font-semibold text-slate-700">Service Required</label>
                   <select className="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none transition text-slate-500">
                     <option>Select a service</option>
                     <option>Electrical Repair</option>
@@ -93,17 +75,10 @@ const ContactServiceSection = () => {
                     <option>Maintenance</option>
                   </select>
                 </div>
-
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-slate-700">
-                    Message
-                  </label>
-                  <textarea
-                    rows="4"
-                    className="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none transition"
-                  ></textarea>
+                  <label className="text-sm font-semibold text-slate-700">Message</label>
+                  <textarea rows="4" className="p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none transition"></textarea>
                 </div>
-
                 <button className="w-full py-4 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors shadow-md shadow-blue-200">
                   Submit Request
                 </button>
@@ -111,9 +86,7 @@ const ContactServiceSection = () => {
             </div>
 
             <div className="flex flex-col space-y-8 p-4">
-              <h3 className="text-xl font-bold text-slate-800">
-                Contact Information
-              </h3>
+              <h3 className="text-xl font-bold text-slate-800">Contact Information</h3>
 
               <div className="flex gap-4">
                 <div className="p-3 bg-blue-50 rounded-lg h-fit">
@@ -121,10 +94,8 @@ const ContactServiceSection = () => {
                 </div>
                 <div>
                   <p className="font-bold text-slate-800">Phone</p>
-                  <p className="text-slate-600">1-800-VOLTPRO</p>
-                  <p className="text-slate-500 text-sm">
-                    Emergency: 1-800-EMERGENCY
-                  </p>
+                  <p className="text-slate-600">{content.contactPhone}</p>
+                  <p className="text-slate-500 text-sm">Emergency: {content.contactEmergency}</p>
                 </div>
               </div>
 
@@ -134,7 +105,7 @@ const ContactServiceSection = () => {
                 </div>
                 <div>
                   <p className="font-bold text-slate-800">Email</p>
-                  <p className="text-slate-600">info@voltpro.com</p>
+                  <p className="text-slate-600">{content.contactEmail}</p>
                 </div>
               </div>
 
@@ -144,8 +115,8 @@ const ContactServiceSection = () => {
                 </div>
                 <div>
                   <p className="font-bold text-slate-800">Address</p>
-                  <p className="text-slate-600">123 Electric Avenue</p>
-                  <p className="text-slate-500 text-sm">Power City, PC 12345</p>
+                  <p className="text-slate-600">{content.contactAddress}</p>
+                  <p className="text-slate-500 text-sm">{content.contactCity}</p>
                 </div>
               </div>
             </div>

@@ -9,12 +9,17 @@ import {
   Trash2,
   Loader2,
   RefreshCw,
+  Settings,
+  Upload,
 } from "lucide-react";
 import { api, resolveImageUrl } from "../api";
 import { removeToken } from "../auth";
+import { useSiteContent } from "../context/SiteContentContext";
 
 export default function Admin() {
   const navigate = useNavigate();
+  const { content, updateContent, DEFAULT_CONTENT } = useSiteContent();
+  const [siteForm, setSiteForm] = useState(content);
   const [projectForm, setProjectForm] = useState({
     title: "",
     description: "",
@@ -39,6 +44,7 @@ export default function Admin() {
     fetch: false,
   });
   const [error, setError] = useState(null);
+  const [siteSaved, setSiteSaved] = useState(false);
 
   const fetchData = async () => {
     setLoading((l) => ({ ...l, fetch: true }));
@@ -190,11 +196,39 @@ export default function Admin() {
     navigate("/sputnik/admin/login", { replace: true });
   };
 
+  const handleSiteFormChange = (field, value) => {
+    setSiteForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSiteImageUpload = (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSiteForm((prev) => ({ ...prev, [field]: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveSiteContent = () => {
+    updateContent(siteForm);
+    setSiteSaved(true);
+    setTimeout(() => setSiteSaved(false), 3000);
+  };
+
+  const handleResetSiteContent = () => {
+    if (window.confirm("Barcha site matnlarini standart qiymatga qaytarishni xohlaysizmi?")) {
+      setSiteForm(DEFAULT_CONTENT);
+      updateContent(DEFAULT_CONTENT);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
       <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between items-center mb-10">
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
             Admin Dashboard
           </h1>
           {error && (
@@ -260,23 +294,16 @@ export default function Admin() {
                   })
                 }
               />
-              <div className="w-full p-3 border rounded-lg focus-within:ring-2 focus-within:ring-blue-500 bg-white">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Project Image
-                </label>
-                <input
-                  id="project-image"
-                  type="file"
-                  accept="image/*"
-                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  required
-                  onChange={(e) =>
-                    handleImageUpload(e, (base64) =>
-                      setProjectForm({ ...projectForm, image: base64 }),
-                    )
-                  }
-                />
-              </div>
+              <StyledFileInput
+                id="project-image"
+                label="Project Image"
+                color="blue"
+                onChange={(e) =>
+                  handleImageUpload(e, (base64) =>
+                    setProjectForm({ ...projectForm, image: base64 }),
+                  )
+                }
+              />
               <input
                 type="text"
                 placeholder="Link URL (Optional)"
@@ -376,23 +403,16 @@ export default function Admin() {
                   setFeedbackForm({ ...feedbackForm, content: e.target.value })
                 }
               />
-              <div className="w-full p-3 border rounded-lg focus-within:ring-2 focus-within:ring-green-500 bg-white">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Avatar Image
-                </label>
-                <input
-                  id="feedback-image"
-                  type="file"
-                  accept="image/*"
-                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
-                  required
-                  onChange={(e) =>
-                    handleImageUpload(e, (base64) =>
-                      setFeedbackForm({ ...feedbackForm, image: base64 }),
-                    )
-                  }
-                />
-              </div>
+              <StyledFileInput
+                id="feedback-image"
+                label="Avatar Image"
+                color="green"
+                onChange={(e) =>
+                  handleImageUpload(e, (base64) =>
+                    setFeedbackForm({ ...feedbackForm, image: base64 }),
+                  )
+                }
+              />
               <input
                 type="number"
                 min="1"
@@ -485,23 +505,16 @@ export default function Admin() {
                   setOfferForm({ ...offerForm, desc: e.target.value })
                 }
               />
-              <div className="w-full p-3 border rounded-lg focus-within:ring-2 focus-within:ring-orange-500 bg-white">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Offer Icon/Image
-                </label>
-                <input
-                  id="offer-icon"
-                  type="file"
-                  accept="image/*"
-                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
-                  required
-                  onChange={(e) =>
-                    handleImageUpload(e, (base64) =>
-                      setOfferForm({ ...offerForm, icon: base64 }),
-                    )
-                  }
-                />
-              </div>
+              <StyledFileInput
+                id="offer-icon"
+                label="Offer Icon/Image"
+                color="orange"
+                onChange={(e) =>
+                  handleImageUpload(e, (base64) =>
+                    setOfferForm({ ...offerForm, icon: base64 }),
+                  )
+                }
+              />
               <button
                 type="submit"
                 disabled={loading.offer}
@@ -553,7 +566,236 @@ export default function Admin() {
             </div>
           </div>
         </div>
+
+        {/* ===== SITE SETTINGS ===== */}
+        <div className="mt-10 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-purple-50 rounded-bl-full -z-10 opacity-40"></div>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold flex items-center text-gray-800">
+              <Settings className="w-6 h-6 mr-3 text-purple-500" />
+              Site Settings (Landing Page)
+            </h2>
+            <div className="flex gap-3">
+              <button
+                onClick={handleResetSiteContent}
+                className="px-4 py-2 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Standartga qaytarish
+              </button>
+              <button
+                onClick={handleSaveSiteContent}
+                className={`px-6 py-2 text-sm font-bold rounded-lg transition-colors shadow-md ${
+                  siteSaved
+                    ? "bg-green-500 text-white shadow-green-200"
+                    : "bg-purple-600 text-white hover:bg-purple-700 shadow-purple-200"
+                }`}
+              >
+                {siteSaved ? "✓ Saqlandi!" : "Saqlash"}
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+
+            {/* Header */}
+            <div className="space-y-4">
+              <h3 className="font-bold text-gray-700 border-b pb-2">🏠 Header</h3>
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">Logo (rasm)</label>
+                {siteForm.logo && (
+                  <img src={siteForm.logo} alt="logo preview" className="w-16 h-16 object-contain rounded-lg border mb-2" />
+                )}
+                <StyledFileInput
+                  label="Logo yuklash"
+                  color="purple"
+                  onChange={(e) => handleSiteImageUpload(e, "logo")}
+                />
+                {siteForm.logo && (
+                  <button onClick={() => handleSiteFormChange("logo", "")} className="text-xs text-red-400 hover:text-red-600 block mt-1">
+                    Logoni o'chirish
+                  </button>
+                )}
+              </div>
+              <SiteInput label="Kompaniya nomi" value={siteForm.companyName} onChange={(v) => handleSiteFormChange("companyName", v)} />
+            </div>
+
+            {/* Hero */}
+            <div className="space-y-4">
+              <h3 className="font-bold text-gray-700 border-b pb-2">🚀 Hero Section</h3>
+              <SiteInput label="Asosiy sarlavha" value={siteForm.heroTitle} onChange={(v) => handleSiteFormChange("heroTitle", v)} />
+              <SiteTextarea label="Tavsif matni" value={siteForm.heroSubtitle} onChange={(v) => handleSiteFormChange("heroSubtitle", v)} />
+              <SiteInput label="Telefon raqam" value={siteForm.heroPhone} onChange={(v) => handleSiteFormChange("heroPhone", v)} />
+              <SiteInput label="Badge 1" value={siteForm.heroBadge1} onChange={(v) => handleSiteFormChange("heroBadge1", v)} />
+              <SiteInput label="Badge 2" value={siteForm.heroBadge2} onChange={(v) => handleSiteFormChange("heroBadge2", v)} />
+              <SiteInput label="Badge 3" value={siteForm.heroBadge3} onChange={(v) => handleSiteFormChange("heroBadge3", v)} />
+            </div>
+
+            {/* Services */}
+            <div className="space-y-4">
+              <h3 className="font-bold text-gray-700 border-b pb-2">⚡ Services Bo'limi</h3>
+              <SiteInput label="Sarlavha" value={siteForm.servicesTitle} onChange={(v) => handleSiteFormChange("servicesTitle", v)} />
+              <SiteTextarea label="Tavsif" value={siteForm.servicesDesc} onChange={(v) => handleSiteFormChange("servicesDesc", v)} />
+              
+              <div className="space-y-4 pt-4 border-t">
+                <div className="grid grid-cols-2 gap-2">
+                  <SiteInput label="Servis 1 — nomi" value={siteForm.service1Title} onChange={(v) => handleSiteFormChange("service1Title", v)} />
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 uppercase">Icon 1</label>
+                    <StyledFileInput small color="purple" onChange={(e) => handleSiteImageUpload(e, "service1Icon")} />
+                  </div>
+                </div>
+                <SiteInput label="Servis 1 — tavsif" value={siteForm.service1Desc} onChange={(v) => handleSiteFormChange("service1Desc", v)} />
+              </div>
+
+              <div className="space-y-4 pt-4 border-t">
+                <div className="grid grid-cols-2 gap-2">
+                  <SiteInput label="Servis 2 — nomi" value={siteForm.service2Title} onChange={(v) => handleSiteFormChange("service2Title", v)} />
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 uppercase">Icon 2</label>
+                    <StyledFileInput small color="purple" onChange={(e) => handleSiteImageUpload(e, "service2Icon")} />
+                  </div>
+                </div>
+                <SiteInput label="Servis 2 — tavsif" value={siteForm.service2Desc} onChange={(v) => handleSiteFormChange("service2Desc", v)} />
+              </div>
+
+              <div className="space-y-4 pt-4 border-t">
+                <div className="grid grid-cols-2 gap-2">
+                  <SiteInput label="Servis 3 — nomi" value={siteForm.service3Title} onChange={(v) => handleSiteFormChange("service3Title", v)} />
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 uppercase">Icon 3</label>
+                    <StyledFileInput small color="purple" onChange={(e) => handleSiteImageUpload(e, "service3Icon")} />
+                  </div>
+                </div>
+                <SiteInput label="Servis 3 — tavsif" value={siteForm.service3Desc} onChange={(v) => handleSiteFormChange("service3Desc", v)} />
+              </div>
+
+              <div className="space-y-4 pt-4 border-t">
+                <div className="grid grid-cols-2 gap-2">
+                  <SiteInput label="Servis 4 — nomi" value={siteForm.service4Title} onChange={(v) => handleSiteFormChange("service4Title", v)} />
+                  <div className="space-y-1">
+                    <label className="block text-xs font-semibold text-gray-500 uppercase">Icon 4</label>
+                    <StyledFileInput small color="purple" onChange={(e) => handleSiteImageUpload(e, "service4Icon")} />
+                  </div>
+                </div>
+                <SiteInput label="Servis 4 — tavsif" value={siteForm.service4Desc} onChange={(v) => handleSiteFormChange("service4Desc", v)} />
+              </div>
+            </div>
+
+            {/* Why Choose Us */}
+            <div className="space-y-4">
+              <h3 className="font-bold text-gray-700 border-b pb-2">🏆 Why Choose Us</h3>
+              <SiteInput label="Sarlavha" value={siteForm.whyTitle} onChange={(v) => handleSiteFormChange("whyTitle", v)} />
+              <SiteTextarea label="Tavsif" value={siteForm.whyDesc} onChange={(v) => handleSiteFormChange("whyDesc", v)} />
+              <SiteInput label="Feature 1 — statistika" value={siteForm.why1Stat} onChange={(v) => handleSiteFormChange("why1Stat", v)} />
+              <SiteInput label="Feature 1 — nomi" value={siteForm.why1Subtitle} onChange={(v) => handleSiteFormChange("why1Subtitle", v)} />
+              <SiteInput label="Feature 1 — tavsif" value={siteForm.why1Desc} onChange={(v) => handleSiteFormChange("why1Desc", v)} />
+              <SiteInput label="Feature 2 — statistika" value={siteForm.why2Stat} onChange={(v) => handleSiteFormChange("why2Stat", v)} />
+              <SiteInput label="Feature 2 — nomi" value={siteForm.why2Subtitle} onChange={(v) => handleSiteFormChange("why2Subtitle", v)} />
+              <SiteInput label="Feature 2 — tavsif" value={siteForm.why2Desc} onChange={(v) => handleSiteFormChange("why2Desc", v)} />
+              <SiteInput label="Feature 3 — statistika" value={siteForm.why3Stat} onChange={(v) => handleSiteFormChange("why3Stat", v)} />
+              <SiteInput label="Feature 3 — nomi" value={siteForm.why3Subtitle} onChange={(v) => handleSiteFormChange("why3Subtitle", v)} />
+              <SiteInput label="Feature 3 — tavsif" value={siteForm.why3Desc} onChange={(v) => handleSiteFormChange("why3Desc", v)} />
+            </div>
+
+            {/* Contact */}
+            <div className="space-y-4">
+              <h3 className="font-bold text-gray-700 border-b pb-2">📞 Contact Ma'lumotlari</h3>
+              <SiteInput label="Maps Embed URL" value={siteForm.mapUrl} onChange={(v) => handleSiteFormChange("mapUrl", v)} />
+              <SiteInput label="Telefon" value={siteForm.contactPhone} onChange={(v) => handleSiteFormChange("contactPhone", v)} />
+              <SiteInput label="Favqulodda telefon" value={siteForm.contactEmergency} onChange={(v) => handleSiteFormChange("contactEmergency", v)} />
+              <SiteInput label="Email" value={siteForm.contactEmail} onChange={(v) => handleSiteFormChange("contactEmail", v)} />
+              <SiteInput label="Manzil" value={siteForm.contactAddress} onChange={(v) => handleSiteFormChange("contactAddress", v)} />
+              <SiteInput label="Shahar / Pochta" value={siteForm.contactCity} onChange={(v) => handleSiteFormChange("contactCity", v)} />
+            </div>
+
+            {/* Footer */}
+            <div className="space-y-4">
+              <h3 className="font-bold text-gray-700 border-b pb-2">🔗 Footer</h3>
+              <SiteInput label="Kompaniya nomi" value={siteForm.footerCompany} onChange={(v) => handleSiteFormChange("footerCompany", v)} />
+              <SiteTextarea label="Tavsif" value={siteForm.footerDesc} onChange={(v) => handleSiteFormChange("footerDesc", v)} />
+              <SiteInput label="Telefon" value={siteForm.footerPhone} onChange={(v) => handleSiteFormChange("footerPhone", v)} />
+              <SiteInput label="Email" value={siteForm.footerEmail} onChange={(v) => handleSiteFormChange("footerEmail", v)} />
+              <SiteInput label="Copyright matni" value={siteForm.footerCopyright} onChange={(v) => handleSiteFormChange("footerCopyright", v)} />
+            </div>
+
+          </div>
+        </div>
+        {/* ===== END SITE SETTINGS ===== */}
+
       </div>
     </div>
   );
 }
+
+// ---- Helper components for Site Settings ----
+const SiteInput = ({ label, value, onChange }) => (
+  <div className="space-y-1">
+    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">
+      {label}
+    </label>
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full p-2.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition"
+    />
+  </div>
+);
+
+const SiteTextarea = ({ label, value, onChange }) => (
+  <div className="space-y-1">
+    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide">
+      {label}
+    </label>
+    <textarea
+      rows={3}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full p-2.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition resize-none"
+    />
+  </div>
+);
+
+const StyledFileInput = ({ label, onChange, color = "blue", id, small = false }) => {
+  const [fileName, setFileName] = useState("");
+
+  const colorVariants = {
+    blue: "bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200",
+    green: "bg-green-50 text-green-700 hover:bg-green-100 border-green-200",
+    orange: "bg-orange-50 text-orange-700 hover:bg-orange-100 border-orange-200",
+    purple: "bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200",
+  };
+
+  return (
+    <div className="space-y-2">
+      {label && !small && (
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
+      <div className="relative group">
+        <input
+          id={id}
+          type="file"
+          accept="image/*"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file) setFileName(file.name);
+            onChange(e);
+          }}
+        />
+        <div
+          className={`flex items-center gap-2 border border-dashed rounded-lg transition-all duration-200 ${
+            colorVariants[color]
+          } ${small ? "p-1.5 text-xs" : "p-3 text-sm"}`}
+        >
+          <Upload className={small ? "w-3.5 h-3.5" : "w-5 h-5"} />
+          <span className="font-medium truncate">
+            {fileName || (small ? "Yuklash" : "Faylni tanlang")}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};

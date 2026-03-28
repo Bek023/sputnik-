@@ -3,16 +3,19 @@ import "./App.css";
 import Home from "./landing/home";
 import AdminGuard from "./admin/AdminGuard";
 import Login from "./admin/Login";
+import { SiteContentProvider } from "./context/SiteContentContext";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/sputnik/admin/login" element={<Login />} />
-        <Route path="/sputnik/admin" element={<AdminGuard />} />
-      </Routes>
-    </Router>
+    <SiteContentProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/sputnik/admin/login" element={<Login />} />
+          <Route path="/sputnik/admin" element={<AdminGuard />} />
+        </Routes>
+      </Router>
+    </SiteContentProvider>
   );
 }
 

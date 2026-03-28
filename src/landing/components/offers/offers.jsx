@@ -39,7 +39,7 @@ export default function Offers() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {offers.map((offer, index) => (
             <div key={offer.id ?? index} className="bg-linear-to-br from-orange-50 to-white p-8 rounded-3xl border border-orange-100 shadow-sm hover:shadow-lg transition-all duration-300 relative overflow-hidden group">
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-orange-100 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
